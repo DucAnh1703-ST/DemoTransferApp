@@ -52,7 +52,7 @@ class TransferService : Service() {
                 val first100 = aidlUI?.first100Students
                 if (first100 != null) {
                     // Lưu danh sách first100 dưới dạng String JSON vào SharedPreferences
-                    saveToSharedPreferences(applicationContext, "requestFirst100", first100)
+                    saveToSharedPreferences("requestFirst100", first100)
                 } else {
                     Log.d("TransferService", "First 100 students is null")
                 }
@@ -117,8 +117,8 @@ class TransferService : Service() {
     }
 
     // Hàm lưu vào SharedPreferences dưới dạng String (JSON)
-    private fun saveToSharedPreferences(context: Context, key: String, value: Any) {
-        val sharedPreferences: SharedPreferences = context.getSharedPreferences("TransferServicePrefs", Context.MODE_PRIVATE)
+    private fun saveToSharedPreferences(key: String, value: Any) {
+        val sharedPreferences: SharedPreferences = applicationContext.getSharedPreferences("TransferServicePrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
         // Chuyển đối tượng thành JSON string

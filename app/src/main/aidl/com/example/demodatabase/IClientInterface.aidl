@@ -12,4 +12,8 @@ parcelable Subject;
 
 interface IClientInterface {
     List<Student> getFirst100Students();
+    List<Student> getTop10StudentsBySubject(String nameSubject);
+    List<Student> getTop10StudentsBySumA(String nameCity);
+    List<Student> getTop10StudentsBySumB(String nameCity);
+    Student getStudentByPriority(String firstName, String nameCity);
 }

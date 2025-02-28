@@ -15,6 +15,7 @@ import com.google.gson.Gson
 class TransferService : Service() {
     var command: String = ""
     private var aidlUI: IClientInterface? = null
+//    private val sharedPreferences: SharedPreferences = applicationContext.getSharedPreferences("TransferServicePrefs", Context.MODE_PRIVATE)
 
     private val serviceUIConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -46,7 +47,7 @@ class TransferService : Service() {
 
         when (command) {
             "requestFirst100" -> {
-                Log.d("TransferAppService", "Requesting First 100 students")
+                Log.d("TransferAppService", "Requesting First 100 Students")
 
                 // Lấy danh sách first100
                 val first100 = aidlUI?.first100Students
@@ -61,51 +62,88 @@ class TransferService : Service() {
             }
 
             "request10BySubject" -> {
-                val subject = intent?.getStringExtra("subject") ?: ""
-                if (subject.isNotEmpty()) {
-                    Log.d("TransferAppService", "Requesting 10 students by subject: $subject")
+                val subject = intent?.getStringExtra("subject")
+                Log.d("TransferAppService", "Requesting 10 students by Subject")
 
-                    //
-//                    request10BySubjectAsync(subject = subject)
-
-
+                // Lấy danh sách first100
+                val first10BySubject = aidlUI?.getTop10StudentsBySubject(subject)
+                if (first10BySubject != null) {
+                    // Lưu danh sách first100 dưới dạng String JSON vào SharedPreferences
+                    saveToSharedPreferences("request10BySubject", first10BySubject)
                 } else {
-                    Log.d("TransferAppService", "No subject provided")
+                    Log.d("TransferService", "Get 10 students by Subject is null")
                 }
+
+//                Log.d("TransferService", "onStartCommand: ${first10BySubject?.lastOrNull()}")
             }
 
             "request10BySumA" -> {
-                Log.d("TransferAppService", "Requesting 10 students by SumA")
+                val city = intent?.getStringExtra("city")
+                Log.d("TransferAppService", "Requesting 10 studentsA by City")
+
+                // Lấy danh sách first100
+                val first10AByCity = aidlUI?.getTop10StudentsBySumA(city)
+                if (first10AByCity != null) {
+                    // Lưu danh sách first100 dưới dạng String JSON vào SharedPreferences
+                    saveToSharedPreferences("request10BySumA", first10AByCity)
+                } else {
+                    Log.d("TransferService", "Get 10 studentsA by City is null")
+                }
+
+//                Log.d("TransferService", "onStartCommand: ${first10BySubject?.lastOrNull()}")
             }
 
             "request10BySumB" -> {
-                Log.d("TransferAppService", "Requesting 10 students by SumB")
+                val city = intent?.getStringExtra("city")
+                Log.d("TransferAppService", "Requesting 10 studentsB by City")
+
+                // Lấy danh sách first100
+                val first10BByCity = aidlUI?.getTop10StudentsBySumB(city)
+                if (first10BByCity != null) {
+                    // Lưu danh sách first100 dưới dạng String JSON vào SharedPreferences
+                    saveToSharedPreferences("request10BySumB", first10BByCity)
+                } else {
+                    Log.d("TransferService", "Get 10 studentsB by City is null")
+                }
+
+//                Log.d("TransferService", "onStartCommand: ${first10BySubject?.lastOrNull()}")
             }
 
             "requestStudent" -> {
-                Log.d("TransferAppService", "Requesting a specific student")
+                val city = intent?.getStringExtra("city")
+                val name = intent?.getStringExtra("name")
+                Log.d("TransferAppService", "Requesting students by Firstname and City")
+
+                // Lấy danh sách first100
+                val studentByPriority = aidlUI?.getStudentByPriority(name, city)
+                if (studentByPriority != null) {
+                    // Lưu danh sách first100 dưới dạng String JSON vào SharedPreferences
+                    saveToSharedPreferences("requestStudent", studentByPriority)
+                } else {
+                    Log.d("TransferService", "Get students by Firstname and City is null")
+                }
+
+//                Log.d("TransferService", "onStartCommand: ${first10BySubject?.lastOrNull()}")
             }
 
-
             "resFirst100" -> {
-                Log.d("TransferAppService", "Res First 100 students")
-                // Do something here
+                removeValues("requestFirst100")
             }
 
             "res10BySubject" -> {
-                Log.d("TransferAppService", "Res 10 students by subject")
+                removeValues("request10BySubject")
             }
 
             "res10BySumA" -> {
-                Log.d("TransferAppService", "Res 10 students by SumA")
+                removeValues("request10BySumA")
             }
 
             "res10BySumB" -> {
-                Log.d("TransferAppService", "Res 10 students by SumB")
+                removeValues("request10BySumB")
             }
 
             "resStudent" -> {
-                Log.d("TransferAppService", "Res a specific student")
+                removeValues("requestStudent")
             }
 
             else -> {
@@ -129,6 +167,17 @@ class TransferService : Service() {
         editor.apply()
 
         Log.d("TransferService", "Saved $key to SharedPreferences: $json")
+    }
+
+    private fun removeValues(vararg keys: String) {
+        val sharedPreferences: SharedPreferences = applicationContext.getSharedPreferences("TransferServicePrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        for (key in keys) {
+            editor.remove(key)
+        }
+        editor.apply()
+
+        Log.d("TransferService", "Move ${keys.joinToString(", ")} success")
     }
 
     override fun onBind(intent: Intent): IBinder? {

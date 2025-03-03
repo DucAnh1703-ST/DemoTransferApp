@@ -54,77 +54,93 @@ class TransferService : Service() {
                 if (first100 != null) {
                     // Lưu danh sách first100 dưới dạng String JSON vào SharedPreferences
                     saveToSharedPreferences("requestFirst100", first100)
+
+                    // Vòng lặp để hiển thị mỗi student là một log
+                    for (student in first100) {
+                        Log.d("TransferService", "Student: $student")
+                    }
                 } else {
                     Log.d("TransferService", "First 100 students is null")
                 }
-
-                Log.d("TransferService", "onStartCommand: ${first100?.lastOrNull()}")
             }
 
             "request10BySubject" -> {
                 val subject = intent?.getStringExtra("subject")
                 Log.d("TransferAppService", "Requesting 10 students by Subject")
 
-                // Lấy danh sách first100
+                // Lấy danh sách first10BySubject
                 val first10BySubject = aidlUI?.getTop10StudentsBySubject(subject)
                 if (first10BySubject != null) {
-                    // Lưu danh sách first100 dưới dạng String JSON vào SharedPreferences
+                    // Lưu danh sách first10BySubject dưới dạng String JSON vào SharedPreferences
                     saveToSharedPreferences("request10BySubject", first10BySubject)
+
+                    // Vòng lặp để hiển thị mỗi student là một log
+                    for (student in first10BySubject) {
+                        Log.d("TransferService", "Student: $student")
+                    }
                 } else {
                     Log.d("TransferService", "Get 10 students by Subject is null")
                 }
-
-//                Log.d("TransferService", "onStartCommand: ${first10BySubject?.lastOrNull()}")
             }
 
             "request10BySumA" -> {
                 val city = intent?.getStringExtra("city")
                 Log.d("TransferAppService", "Requesting 10 studentsA by City")
 
-                // Lấy danh sách first100
+                // Lấy danh sách first10AByCity
                 val first10AByCity = aidlUI?.getTop10StudentsBySumA(city)
                 if (first10AByCity != null) {
-                    // Lưu danh sách first100 dưới dạng String JSON vào SharedPreferences
+                    // Lưu danh sách first10AByCity dưới dạng String JSON vào SharedPreferences
                     saveToSharedPreferences("request10BySumA", first10AByCity)
+
+                    // Vòng lặp để hiển thị mỗi student là một log
+                    for (student in first10AByCity) {
+                        Log.d("TransferService", "Student: $student")
+                    }
                 } else {
                     Log.d("TransferService", "Get 10 studentsA by City is null")
                 }
-
-//                Log.d("TransferService", "onStartCommand: ${first10BySubject?.lastOrNull()}")
             }
+
 
             "request10BySumB" -> {
                 val city = intent?.getStringExtra("city")
                 Log.d("TransferAppService", "Requesting 10 studentsB by City")
 
-                // Lấy danh sách first100
+                // Lấy danh sách first10BByCity
                 val first10BByCity = aidlUI?.getTop10StudentsBySumB(city)
                 if (first10BByCity != null) {
-                    // Lưu danh sách first100 dưới dạng String JSON vào SharedPreferences
+                    // Lưu danh sách first10BByCity dưới dạng String JSON vào SharedPreferences
                     saveToSharedPreferences("request10BySumB", first10BByCity)
+
+                    // Vòng lặp để hiển thị mỗi student là một log
+                    for (student in first10BByCity) {
+                        Log.d("TransferService", "Student: $student")
+                    }
                 } else {
                     Log.d("TransferService", "Get 10 studentsB by City is null")
                 }
-
-//                Log.d("TransferService", "onStartCommand: ${first10BySubject?.lastOrNull()}")
             }
+
 
             "requestStudent" -> {
                 val city = intent?.getStringExtra("city")
                 val name = intent?.getStringExtra("name")
                 Log.d("TransferAppService", "Requesting students by Firstname and City")
 
-                // Lấy danh sách first100
+                // Lấy danh sách studentByPriority (chỉ có 1 sinh viên)
                 val studentByPriority = aidlUI?.getStudentByPriority(name, city)
                 if (studentByPriority != null) {
-                    // Lưu danh sách first100 dưới dạng String JSON vào SharedPreferences
+                    // Lưu thông tin studentByPriority dưới dạng String JSON vào SharedPreferences
                     saveToSharedPreferences("requestStudent", studentByPriority)
-                } else {
-                    Log.d("TransferService", "Get students by Firstname and City is null")
-                }
 
-//                Log.d("TransferService", "onStartCommand: ${first10BySubject?.lastOrNull()}")
+                    // Log thông tin của student
+                    Log.d("TransferService", "Student: $studentByPriority")
+                } else {
+                    Log.d("TransferService", "Get student by Firstname and City is null")
+                }
             }
+
 
             "resFirst100" -> {
                 removeValues("requestFirst100")
